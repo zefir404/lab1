@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Dict, Any
 from datetime import datetime
 from .order_item import OrderItem
 
@@ -14,7 +14,7 @@ class Order:
     def total(self) -> float:
         return sum(i.subtotal() for i in self.items)
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
             "customer_id": self.customer_id,

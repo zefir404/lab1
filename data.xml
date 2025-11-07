@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='utf-8'?>
+<StoreData>
+  <Inventory>
+    <Products>
+      <Product id="876">
+        <Name>we</Name>
+        <Description>2345tyh</Description>
+        <Price>1234.0</Price>
+        <Stock>234</Stock>
+        <Category>2345ty</Category>
+      </Product>
+    </Products>
+  </Inventory>
+  <Customers>
+    <Customer>
+      <Email>alice@example.com</Email>
+      <Name>Alice</Name>
+      <Balance>1000.0</Balance>
+    </Customer>
+    <Customer>
+      <Email>bob@example.com</Email>
+      <Name>Bob</Name>
+      <Balance>500.0</Balance>
+    </Customer>
+  </Customers>
+  <Orders />
+</StoreData>

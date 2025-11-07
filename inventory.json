@@ -1,0 +1,20 @@
+{
+  "products": [
+    {
+      "id": "p001",
+      "name": "Smartphone X1",
+      "description": "6.5\" OLED",
+      "price": 399.99,
+      "stock": 10,
+      "category": "phones"
+    },
+    {
+      "id": "p002",
+      "name": "Laptop Pro 14",
+      "description": "14\" 16GB RAM",
+      "price": 1299.0,
+      "stock": 5,
+      "category": "laptops"
+    }
+  ]
+}

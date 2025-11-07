@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<store>
+  <products>
+    <product id="p001">
+      <name>Smartphone X1</name>
+      <description>6.5&quot; OLED</description>
+      <price>399.99</price>
+      <stock>10</stock>
+      <category>phones</category>
+    </product>
+    <product id="p002">
+      <name>Laptop Pro 14</name>
+      <description>14&quot; 16GB RAM</description>
+      <price>1299.0</price>
+      <stock>5</stock>
+      <category>laptops</category>
+    </product>
+  </products>
+</store>

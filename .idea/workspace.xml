@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="cef37a29-9783-4108-9902-512280a1ebc5" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Product.py" afterDir="false" />
+    <list default="true" id="cef37a29-9783-4108-9902-512280a1ebc5" name="Changes" comment="добавили класс inventory">
+      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,9 +23,17 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "history": [
+    {
+      "state": "OPEN",
+      "assignee": "zefir404",
+      "author": "zefir404"
+    }
+  ],
   "lastFilter": {
     "state": "OPEN",
-    "assignee": "zefir404"
+    "assignee": "zefir404",
+    "author": "zefir404"
   }
 }]]></component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
@@ -42,12 +53,19 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.main.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/Фируза/Downloads/lab1_updated_menu",
     "settings.editor.selected.configurable": "preferences.lookFeel"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Фируза\lab1\classes" />
+    </key>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -64,6 +82,79 @@
       <option name="presentableId" value="Default" />
       <updated>1762463236103</updated>
     </task>
+    <task id="LOCAL-00001" summary="добавили класс Product">
+      <option name="closed" value="true" />
+      <created>1762463873642</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1762463873642</updated>
+    </task>
+    <task id="LOCAL-00002" summary="добавили класс category">
+      <option name="closed" value="true" />
+      <created>1762464199132</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1762464199132</updated>
+    </task>
+    <task id="LOCAL-00003" summary="добавили класс category">
+      <option name="closed" value="true" />
+      <created>1762464233263</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1762464233263</updated>
+    </task>
+    <task id="LOCAL-00004" summary="добавили класс cart_item">
+      <option name="closed" value="true" />
+      <created>1762464359710</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1762464359710</updated>
+    </task>
+    <task id="LOCAL-00005" summary="добавили класс cart">
+      <option name="closed" value="true" />
+      <created>1762466327268</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1762466327268</updated>
+    </task>
+    <task id="LOCAL-00006" summary="добавили класс order_item">
+      <option name="closed" value="true" />
+      <created>1762466781855</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1762466781855</updated>
+    </task>
+    <task id="LOCAL-00007" summary="добавили класс order">
+      <option name="closed" value="true" />
+      <created>1762467187495</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1762467187495</updated>
+    </task>
+    <task id="LOCAL-00008" summary="добавили класс payment">
+      <option name="closed" value="true" />
+      <created>1762467765913</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1762467765913</updated>
+    </task>
+    <task id="LOCAL-00009" summary="добавили класс inventory">
+      <option name="closed" value="true" />
+      <created>1762468485941</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1762468485941</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -76,5 +167,16 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="добавили класс Product" />
+    <MESSAGE value="добавили класс category" />
+    <MESSAGE value="добавили класс cart_item" />
+    <MESSAGE value="добавили класс cart" />
+    <MESSAGE value="добавили класс order_item" />
+    <MESSAGE value="добавили класс order" />
+    <MESSAGE value="добавили класс payment" />
+    <MESSAGE value="добавили класс inventory" />
+    <option name="LAST_COMMIT_MESSAGE" value="добавили класс inventory" />
   </component>
 </project>

@@ -1,0 +1,27 @@
+{
+  "inventory": {
+    "products": [
+      {
+        "id": "876",
+        "name": "we",
+        "description": "2345tyh",
+        "price": 1234.0,
+        "stock": 234,
+        "category": "2345ty"
+      }
+    ]
+  },
+  "customers": [
+    {
+      "email": "alice@example.com",
+      "name": "Alice",
+      "balance": 1000.0
+    },
+    {
+      "email": "bob@example.com",
+      "name": "Bob",
+      "balance": 500.0
+    }
+  ],
+  "orders": []
+}

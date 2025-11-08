@@ -22,6 +22,12 @@
       <Name>Bob</Name>
       <Balance>500.0</Balance>
     </Customer>
+    <Customer>
+      <Email>zefir@mail.ru</Email>
+      <Name>zefir</Name>
+      <Balance>1000.0</Balance>
+    </Customer>
   </Customers>
+  <Suppliers />
   <Orders />
 </StoreData>

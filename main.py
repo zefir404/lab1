@@ -1,13 +1,12 @@
-
 from typing import Dict, Any, List, Optional, Tuple
 import json
 import xml.etree.ElementTree as ET
 from datetime import datetime
 from utils.serializer import save_inventory_json, save_inventory_xml, load_inventory_json, load_inventory_xml
-from classes.inventory import Inventory
-from classes.product import Product
-from classes.order_item import OrderItem
-from classes.order import Order
+from clasess.inventory import Inventory
+from clasess.product import Product
+from clasess.order_item import OrderItem
+from clasess.order import Order
 from utils.helpers import generate_id
 from exceptions.store_exceptions import StoreError, SerializationError
 

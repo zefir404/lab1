@@ -3,7 +3,7 @@ import json
 import xml.etree.ElementTree as ET
 from typing import Dict
 from exceptions.store_exceptions import SerializationError
-from classes.inventory import Inventory
+from clasess.inventory import Inventory
 
 def save_inventory_json(inv: Inventory, filepath: str) -> None:
     """Сохраняет Inventory в JSON файл."""

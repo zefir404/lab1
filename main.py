@@ -1,54 +1,63 @@
-from typing import Dict, Any, List, Optional, Tuple
+"""Интерактивная точка входа для интернет-магазина электроники."""
+from typing import List, Optional
 import json
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from utils.serializer import save_inventory_json, save_inventory_xml, load_inventory_json, load_inventory_xml
 from clasess.inventory import Inventory
 from clasess.product import Product
 from clasess.order_item import OrderItem
 from clasess.order import Order
+from clasess.customer import Customer
+from clasess.supplier import Supplier
 from utils.helpers import generate_id
 from exceptions.store_exceptions import StoreError, SerializationError
 
-# Глобальные данные
+# ---------------------- Глобальные данные ----------------------
 inventory: Inventory = Inventory()
-customers: List[Dict[str, Any]] = []  # {"email", "name", "balance"}
+customers: List[Customer] = []
+suppliers: List[Supplier] = []
 orders: List[Order] = []
 
 JSON_FILE = "data.json"
 XML_FILE = "data.xml"
 
-
+# ---------------------- Вспомогательные функции ----------------------
 def find_product_by_id(pid: str) -> Optional[Product]:
     return inventory.find(pid)
 
 
-def find_customer_by_email(email: str) -> Optional[Dict[str, Any]]:
-    return next((c for c in customers if c["email"] == email), None)
+def find_customer_by_email(email: str) -> Optional[Customer]:
+    return next((c for c in customers if c.email == email), None)
 
 
-# ---------- Загрузка / Сохранение ----------
-
+# ---------------------- Загрузка / сохранение ----------------------
 def load_from_json() -> None:
-    global inventory, customers, orders
+    global inventory, customers, suppliers, orders
     try:
         with open(JSON_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
     except FileNotFoundError:
         inventory = Inventory()
         customers = []
+        suppliers = []
         orders = []
         return
-    except Exception as e:
-        raise SerializationError(str(e))
 
     inventory = Inventory()
     inventory.from_dict(data.get("inventory", {"products": []}))
-    customers = data.get("customers", [])
+
+    customers = [
+        Customer(c["email"], c["name"], c.get("balance", 0.0))
+        for c in data.get("customers", [])
+    ]
+    suppliers = [
+        Supplier(s["name"], s["contact"])
+        for s in data.get("suppliers", [])
+    ]
 
     orders = []
     for o in data.get("orders", []):
-        items = [OrderItem(product_id=i["product_id"], quantity=i["quantity"], price=i["price"]) for i in o.get("items", [])]
+        items = [OrderItem(i["product_id"], i["quantity"], i["price"]) for i in o["items"]]
         orders.append(
             Order(
                 id=o["id"],
@@ -60,72 +69,26 @@ def load_from_json() -> None:
         )
 
 
-def load_from_xml() -> None:
-    global inventory, customers, orders
-    try:
-        tree = ET.parse(XML_FILE)
-        root = tree.getroot()
-    except FileNotFoundError:
-        inventory = Inventory()
-        customers = []
-        orders = []
-        return
-    except Exception as e:
-        raise SerializationError(str(e))
-
-    # inventory
-    inv = {"products": []}
-    for prod_el in root.findall("./Inventory/Products/Product"):
-        pid = prod_el.get("id")
-        name = prod_el.findtext("Name") or ""
-        desc = prod_el.findtext("Description") or ""
-        price = float(prod_el.findtext("Price") or 0.0)
-        stock = int(prod_el.findtext("Stock") or 0)
-        category = prod_el.findtext("Category") or None
-        inv["products"].append({
-            "id": pid, "name": name, "description": desc,
-            "price": price, "stock": stock, "category": category
-        })
-    inventory = Inventory()
-    inventory.from_dict(inv)
-
-    # customers
-    customers.clear()
-    for c in root.findall("./Customers/Customer"):
-        customers.append({
-            "email": c.findtext("Email") or "",
-            "name": c.findtext("Name") or "",
-            "balance": float(c.findtext("Balance") or 0.0)
-        })
-
-    # orders
-    orders.clear()
-    for o in root.findall("./Orders/Order"):
-        oid = o.findtext("Id") or generate_id("o")
-        cust = o.findtext("CustomerEmail") or ""
-        items = []
-        for it in o.findall("./Items/Item"):
-            pid = it.findtext("ProductId")
-            qty = int(it.findtext("Quantity") or 0)
-            price = float(it.findtext("Price") or 0.0)
-            items.append(OrderItem(product_id=pid, quantity=qty, price=price))
-        created_at = o.findtext("CreatedAt") or datetime.utcnow().isoformat()
-        orders.append(Order(id=oid, customer_id=cust, items=items, created_at=created_at))
-
-
 def save_to_json() -> None:
     data = {
         "inventory": inventory.to_dict(),
-        "customers": customers,
+        "customers": [
+            {"email": c.email, "name": c.name, "balance": c.balance} for c in customers
+        ],
+        "suppliers": [
+            {"name": s.name, "contact": s.contact} for s in suppliers
+        ],
         "orders": [
             {
                 "id": o.id,
                 "customer_id": o.customer_id,
-                "items": [{"product_id": it.product_id, "quantity": it.quantity, "price": it.price} for it in o.items],
+                "items": [
+                    {"product_id": it.product_id, "quantity": it.quantity, "price": it.price}
+                    for it in o.items
+                ],
                 "status": o.status,
                 "created_at": o.created_at
-            }
-            for o in orders
+            } for o in orders
         ]
     }
     with open(JSON_FILE, "w", encoding="utf-8") as f:
@@ -148,9 +111,15 @@ def save_to_xml() -> None:
     custs_el = ET.SubElement(root, "Customers")
     for c in customers:
         c_el = ET.SubElement(custs_el, "Customer")
-        ET.SubElement(c_el, "Email").text = c.get("email", "")
-        ET.SubElement(c_el, "Name").text = c.get("name", "")
-        ET.SubElement(c_el, "Balance").text = str(c.get("balance", 0.0))
+        ET.SubElement(c_el, "Email").text = c.email
+        ET.SubElement(c_el, "Name").text = c.name
+        ET.SubElement(c_el, "Balance").text = str(c.balance)
+
+    sups_el = ET.SubElement(root, "Suppliers")
+    for s in suppliers:
+        s_el = ET.SubElement(sups_el, "Supplier")
+        ET.SubElement(s_el, "Name").text = s.name
+        ET.SubElement(s_el, "Contact").text = s.contact
 
     orders_el = ET.SubElement(root, "Orders")
     for o in orders:
@@ -169,17 +138,10 @@ def save_to_xml() -> None:
     ET.indent(tree, space="  ", level=0)
     tree.write(XML_FILE, encoding="utf-8", xml_declaration=True)
 
-
-# ---------- Меню ----------
-
-def customer_menu(email: str) -> None:
-    customer = find_customer_by_email(email)
-    if not customer:
-        print("Покупатель не найден.")
-        return
-
+# ---------------------- Меню ----------------------
+def customer_menu(customer: Customer) -> None:
     while True:
-        print(f"\n=== Личный кабинет: {customer['name']} ({customer['email']}) ===")
+        print(f"\n=== Личный кабинет {customer.name} ({customer.email}) ===")
         print("1. Просмотреть каталог")
         print("2. Купить товар")
         print("3. Просмотреть мои заказы")
@@ -187,7 +149,6 @@ def customer_menu(email: str) -> None:
         choice = input("Выберите действие: ").strip()
 
         if choice == "1":
-            print("\nКаталог товаров:")
             for p in inventory.products.values():
                 print(f"{p.id}: {p.name} ({p.category}) — {p.price}₽, в наличии {p.stock}")
 
@@ -202,7 +163,7 @@ def customer_menu(email: str) -> None:
                 print("Недостаточно на складе.")
                 continue
             total = prod.price * qty
-            if customer.get("balance", 0.0) < total:
+            if not customer.can_afford(total):
                 print("Недостаточно средств.")
                 continue
             try:
@@ -210,19 +171,17 @@ def customer_menu(email: str) -> None:
             except StoreError as e:
                 print(f"Ошибка: {e}")
                 continue
-            order_id = generate_id("o")
-            item = OrderItem(product_id=prod.id, quantity=qty, price=prod.price)
-            order = Order(id=order_id, customer_id=email, items=[item])
+            order = Order(generate_id("o"), customer.email, [OrderItem(prod.id, qty, prod.price)])
             orders.append(order)
-            customer["balance"] -= total
-            print(f"✅ Заказ оформлен. Сумма {total}₽. Номер: {order.id}")
+            customer.pay(total)
+            customer.add_order(order)
+            print(f"✅ Заказ оформлен на сумму {total}₽. Номер: {order.id}")
 
         elif choice == "3":
-            cust_orders = [o for o in orders if o.customer_id == email]
-            if not cust_orders:
+            if not customer.orders:
                 print("У вас нет заказов.")
             else:
-                for o in cust_orders:
+                for o in customer.orders:
                     items_str = ", ".join([f"{it.product_id} x{it.quantity}" for it in o.items])
                     print(f"- {o.created_at}: {items_str} | Статус: {o.status}")
 
@@ -239,13 +198,15 @@ def manager_menu() -> None:
         print("2. Добавить товар")
         print("3. Изменить цену/остаток")
         print("4. Удалить товар")
-        print("5. Просмотреть все заказы")
+        print("5. Просмотреть заказы")
+        print("6. Добавить поставщика")
+        print("7. Заказать поставку товара")
         print("0. Выйти")
         choice = input("Выберите действие: ").strip()
 
         if choice == "1":
             for p in inventory.products.values():
-                print(f"{p.id}: {p.name} ({p.category}) — {p.price}₽, в наличии {p.stock}")
+                print(f"{p.id}: {p.name} ({p.category}) — {p.price}₽, {p.stock} шт.")
 
         elif choice == "2":
             pid = input("ID: ").strip()
@@ -254,8 +215,7 @@ def manager_menu() -> None:
             cat = input("Категория: ").strip()
             price = float(input("Цена: ").strip())
             stock = int(input("Количество: ").strip())
-            new_p = Product(id=pid, name=name, description=desc, price=price, stock=stock, category=cat)
-            inventory.add_product(new_p)
+            inventory.add_product(Product(pid, name, desc, price, stock, cat))
             print("✅ Товар добавлен.")
 
         elif choice == "3":
@@ -269,20 +229,43 @@ def manager_menu() -> None:
             print("✅ Обновлено.")
 
         elif choice == "4":
-            pid = input("ID товара для удаления: ").strip()
+            pid = input("ID товара: ").strip()
             if pid in inventory.products:
                 del inventory.products[pid]
                 print("✅ Удалено.")
             else:
-                print("Товар не найден.")
+                print("Не найдено.")
 
         elif choice == "5":
             if not orders:
                 print("Нет заказов.")
-            else:
-                for o in orders:
-                    items_str = ", ".join([f"{it.product_id} x{it.quantity}" for it in o.items])
-                    print(f"{o.created_at} | {o.customer_id} | {items_str} | Статус: {o.status}")
+            for o in orders:
+                items_str = ", ".join([f"{it.product_id} x{it.quantity}" for it in o.items])
+                print(f"{o.id} | {o.customer_id} | {items_str} | {o.status}")
+
+        elif choice == "6":
+            name = input("Название поставщика: ").strip()
+            contact = input("Контакт: ").strip()
+            suppliers.append(Supplier(name, contact))
+            print("✅ Поставщик добавлен.")
+
+        elif choice == "7":
+            if not suppliers:
+                print("Нет поставщиков.")
+                continue
+            print("Список поставщиков:")
+            for i, s in enumerate(suppliers, 1):
+                print(f"{i}. {s.name} ({s.contact})")
+            idx = int(input("Выберите: ")) - 1
+            supplier = suppliers[idx]
+            pid = input("ID товара для пополнения: ").strip()
+            qty = int(input("Количество: ").strip())
+            prod = find_product_by_id(pid)
+            if not prod:
+                print("Товар не найден.")
+                continue
+            supplier.supply_product(prod, qty)
+            print(f"✅ Поставка от {supplier.name}: +{qty} шт. {prod.name}")
 
         elif choice == "0":
             break
@@ -290,20 +273,21 @@ def manager_menu() -> None:
             print("Неверный выбор.")
 
 
+# ---------------------- Основной цикл ----------------------
 def main() -> None:
     print("Выберите формат данных:")
     print("1. JSON")
     print("2. XML")
     choice = input("Ваш выбор: ").strip()
     if choice == "2":
-        load_from_xml()
+        load_from_json()
     else:
         load_from_json()
 
     if not customers:
         customers.extend([
-            {"email": "alice@example.com", "name": "Alice", "balance": 1000.0},
-            {"email": "bob@example.com", "name": "Bob", "balance": 500.0},
+            Customer("alice@example.com", "Alice", 1000.0),
+            Customer("bob@example.com", "Bob", 500.0),
         ])
 
     while True:
@@ -315,22 +299,22 @@ def main() -> None:
         choice = input("Ваш выбор: ").strip()
 
         if choice == "1":
-            pwd = input("Пароль менеджера: ").strip()
-            if pwd == "admin":
+            if input("Пароль менеджера: ").strip() == "admin":
                 manager_menu()
             else:
                 print("Неверный пароль.")
+
         elif choice == "2":
             email = input("Email: ").strip()
-            cust = find_customer_by_email(email)
-            if cust:
-                customer_menu(email)
+            customer = find_customer_by_email(email)
+            if customer:
+                customer_menu(customer)
             else:
-                print("Не найден. Зарегистрироваться? (y/n)")
-                if input().strip().lower() == "y":
+                if input("Пользователь не найден. Зарегистрировать? (y/n): ").lower() == "y":
                     name = input("Имя: ").strip()
                     balance = float(input("Начальный баланс: ").strip())
-                    customers.append({"email": email, "name": name, "balance": balance})
+                    new_cust = Customer(email, name, balance)
+                    customers.append(new_cust)
                     print("✅ Зарегистрирован.")
         elif choice == "0":
             save_to_json()

@@ -21,7 +21,13 @@
       "email": "bob@example.com",
       "name": "Bob",
       "balance": 500.0
+    },
+    {
+      "email": "zefir@mail.ru",
+      "name": "zefir",
+      "balance": 1000.0
     }
   ],
+  "suppliers": [],
   "orders": []
 }

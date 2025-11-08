@@ -1,3 +1,4 @@
+"""Модель заказа."""
 from dataclasses import dataclass, field
 from typing import List, Dict, Any
 from datetime import datetime
@@ -12,9 +13,11 @@ class Order:
     created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
 
     def total(self) -> float:
+        """Возвращает сумму заказа по всем позициям."""
         return sum(i.subtotal() for i in self.items)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Преобразует заказ в словарь, пригодный для вывода/сохранения."""
         return {
             "id": self.id,
             "customer_id": self.customer_id,

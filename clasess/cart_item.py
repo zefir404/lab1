@@ -1,3 +1,4 @@
+"""Позиция в корзине."""
 from dataclasses import dataclass, asdict
 from typing import Dict, Any
 

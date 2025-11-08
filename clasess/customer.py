@@ -1,6 +1,25 @@
 from __future__ import annotations
 from typing import List, Optional
 from clasess.order import Order
+import re
+from exceptions.store_exceptions  import InvalidEmailError
+
+class Customer:
+    def __init__(self, email: str, name: str, balance: float = 0.0):
+        if not self._validate_email(email):
+            raise InvalidEmailError(f"Некорректный адрес электронной почты: {email}")
+
+        self.email = email
+        self.name = name
+        self.balance = balance
+        self.cart = None
+        self.orders = []
+
+    @staticmethod
+    def _validate_email(email: str) -> bool:
+        """Проверяет формат email."""
+        pattern = r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$"
+        return re.match(pattern, email) is not None
 
 class Customer:
     """Класс для представления покупателя интернет-магазина."""

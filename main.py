@@ -11,6 +11,23 @@ from clasess.customer import Customer
 from clasess.supplier import Supplier
 from utils.helpers import generate_id
 from exceptions.store_exceptions import StoreError, SerializationError
+import re
+from clasess.customer import Customer
+from clasess.customer import Customer
+from exceptions.store_exceptions import InvalidEmailError
+
+def register_customer():
+    """Регистрация нового покупателя с проверкой e-mail"""
+    name = input("Введите имя: ").strip()
+
+    while True:
+        email = input("Введите e-mail: ").strip()
+        try:
+            new_customer = Customer(email=email, name=name)
+            print(f"✅ Покупатель {new_customer.name} успешно зарегистрирован!")
+            return new_customer
+        except InvalidEmailError as e:
+            print(f"❌ {e}. Попробуйте снова.")
 
 # ---------------------- Глобальные данные ----------------------
 inventory: Inventory = Inventory()

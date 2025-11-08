@@ -20,3 +20,6 @@ class PaymentError(StoreError):
 class SerializationError(StoreError):
     """Ошибка при сериализации/десериализации данных."""
     pass
+class InvalidEmailError(Exception):
+    """Ошибка при вводе некорректного e-mail"""
+    pass

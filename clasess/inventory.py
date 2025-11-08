@@ -1,18 +1,9 @@
-"""Репозиторий товаров (Inventory) с базовыми CRUD операциями."""
 from typing import Dict, Optional, Any
 from exceptions.store_exceptions import StoreError, OutOfStockError, InvalidQuantityError
 from .product import Product
 
 class Inventory:
-    """Управление набором товаров.
 
-    Методы:
-        add_product: добавить товар
-        find: найти товар по id
-        reserve: зарезервировать (уменьшить запас)
-        release: вернуть запас
-        to_dict / from_dict: сериализация
-    """
     def __init__(self) -> None:
         self.products: Dict[str, Product] = {}
 
